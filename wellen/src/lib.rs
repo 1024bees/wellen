@@ -9,6 +9,7 @@ mod signals;
 pub mod simple;
 mod vcd;
 pub mod viewers;
+
 mod wavemem;
 
 /// Cargo.toml version of this library.
