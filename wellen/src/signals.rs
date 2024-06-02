@@ -10,6 +10,7 @@ use crate::Hierarchy;
 use num_enum::TryFromPrimitive;
 use std::fmt::{Debug, Display, Formatter};
 use std::num::NonZeroU32;
+mod arithmetic;
 mod virtual_signals;
 
 pub type Real = f64;

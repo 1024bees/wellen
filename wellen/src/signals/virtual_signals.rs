@@ -1,6 +1,12 @@
-use std::{mem::size_of, ops::Div};
+use std::{
+    mem::size_of,
+    ops::{BitOr, Div},
+};
 
-use super::{Real, Signal, SignalChangeData, SignalValue, TimeTableIdx};
+use super::{
+    arithmetic::{binary_op, BitValue, Biter},
+    Real, Signal, SignalChangeData, SignalValue, TimeTableIdx,
+};
 
 pub enum SignalViewValue<'a> {
     Owned(OwnedSignalValue),
@@ -22,12 +28,37 @@ impl<'a> SignalViewValue<'a> {
     }
 }
 
-enum OwnedSignalValue {
+pub enum OwnedSignalValue {
     Binary(Box<[u8]>, u32),
     FourValue(Box<[u8]>, u32),
     NineValue(Box<[u8]>, u32),
     String(String),
     Real(Real),
+}
+
+impl<'a> BitOr for SignalViewValue<'a> {
+    type Output = SignalViewValue<'a>;
+    fn bitor(self, rhs: Self) -> Self::Output {
+        let rhs = self.signal_value();
+        let lhs = self.signal_value();
+        match (lhs, rhs) {
+            (
+                SignalValue::Binary(_, _)
+                | SignalValue::FourValue(_, _)
+                | SignalValue::NineValue(_, _),
+                SignalValue::Binary(_, _)
+                | SignalValue::FourValue(_, _)
+                | SignalValue::NineValue(_, _),
+            ) => {
+                let lhs_iter = Biter::from_signal_value(&lhs).unwrap();
+                let rhs_iter = Biter::from_signal_value(&rhs).unwrap();
+                SignalViewValue::Owned(binary_op(lhs_iter, rhs_iter, |l, r| l | r))
+            }
+            (_, _) => {
+                todo!()
+            }
+        }
+    }
 }
 
 impl OwnedSignalValue {
