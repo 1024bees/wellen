@@ -23,6 +23,8 @@ num_enum = { workspace = true }
 thiserror = { workspace = true }
 serde = { workspace = true, optional = true }
 bitvec = "1.0.1"
+bytemuck = "1.16.3"
+itertools.workspace = true
 
 [dev-dependencies]
 itertools = { workspace = true }
