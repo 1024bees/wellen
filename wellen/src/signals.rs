@@ -13,6 +13,7 @@ use std::num::NonZeroU32;
 
 mod convert;
 mod virtual_signals;
+pub use convert::Mappable;
 
 pub type Real = f64;
 pub type Time = u64;

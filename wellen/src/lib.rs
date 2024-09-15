@@ -58,7 +58,7 @@ pub use hierarchy::{
     GetItem, Hierarchy, HierarchyItem, Scope, ScopeRef, ScopeType, SignalRef, Timescale,
     TimescaleUnit, Var, VarDirection, VarIndex, VarRef, VarType,
 };
-pub use signals::{Real, Signal, SignalSource, SignalValue, Time, TimeTableIdx};
+pub use signals::{Mappable, Real, Signal, SignalSource, SignalValue, Time, TimeTableIdx};
 
 #[cfg(feature = "benchmark")]
 pub use wavemem::check_states_pub;
