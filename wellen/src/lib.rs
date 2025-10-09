@@ -61,7 +61,7 @@ pub use hierarchy::{
     Hierarchy, Scope, ScopeOrVar, ScopeOrVarRef, ScopeRef, ScopeType, SignalEncoding, SignalRef,
     Timescale, TimescaleUnit, Var, VarDirection, VarIndex, VarRef, VarType,
 };
-pub use signals::{Real, Signal, SignalSource, SignalValue, Time, TimeTableIdx};
+pub use signals::{BitVectorBuilder, Real, Signal, SignalSource, SignalValue, Time, TimeTableIdx};
 
 #[cfg(feature = "benchmark")]
 pub use wavemem::check_states_pub;

@@ -1,6 +1,6 @@
 mod convert;
 use std::sync::Arc;
-
+mod transform;
 use convert::Mappable;
 use num_bigint::BigUint;
 use pyo3::types::PyInt;
@@ -428,6 +428,10 @@ impl Signal {
             .binary_search(&time)
             .unwrap_or_else(|val| val);
         self.value_at_idx(val as TimeTableIdx, py)
+    }
+
+    pub fn sliced(&self, stard: u32, end: u32) -> PyResult<Signal> {
+        transform::slice(self, stard, end)
     }
 
     pub fn value_at_idx<'a>(&self, idx: TimeTableIdx, py: Python<'a>) -> Option<Bound<'a, PyAny>> {

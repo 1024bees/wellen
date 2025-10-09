@@ -225,6 +225,20 @@ impl PartialEq for Signal {
 impl Eq for Signal {}
 
 impl Signal {
+    fn max_states(&self) -> Option<States> {
+        match self.data {
+            _ => None,
+            SignalChangeData::FixedLength { encoding, .. } => match encoding {
+                FixedWidthEncoding::BitVector {
+                    max_states,
+                    bits,
+                    meta_byte,
+                } => Some(max_states),
+                _ => None,
+            },
+        }
+    }
+
     pub fn new_fixed_len(
         idx: SignalRef,
         time_indices: Vec<TimeTableIdx>,
@@ -351,6 +365,12 @@ pub struct BitVectorBuilder {
 }
 
 impl BitVectorBuilder {
+    pub fn from_signal(signal: &Signal, width: u32) -> Option<Self> {
+        let max_states = signal.max_states()?;
+
+        Some(Self::new(max_states, width))
+    }
+
     fn new(max_states: States, bits: u32) -> Self {
         assert!(bits > 0);
         let (len, has_meta) = get_len_and_meta(max_states, bits);
@@ -368,7 +388,7 @@ impl BitVectorBuilder {
         }
     }
 
-    fn add_change(&mut self, time_idx: TimeTableIdx, value: SignalValue) {
+    pub fn add_change(&mut self, time_idx: TimeTableIdx, value: SignalValue) {
         debug_assert_eq!(value.bits().unwrap(), self.bits);
         let local_encoding = value.states().unwrap();
         debug_assert!(local_encoding.bits() >= self.max_states.bits());
@@ -411,7 +431,7 @@ impl BitVectorBuilder {
         }
     }
 
-    fn finish(self, id: SignalRef) -> Signal {
+    pub fn finish(self, id: SignalRef) -> Signal {
         debug_assert_eq!(
             self.data.len(),
             self.time_indices.len() * self.bytes_per_entry
