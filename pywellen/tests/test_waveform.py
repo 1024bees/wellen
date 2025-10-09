@@ -64,6 +64,7 @@ def test_vcd_not_starting_at_zero():
     assert sp_sig.value_at_idx(1) is not None
     assert sp_sig.value_at_idx(0) is None
 
+
 def test_vcd_var_types_types():
     filename = _git_root_rel("wellen/inputs/gtkwave-analyzer/vcd_extensions.vcd")
     waves = Waveform(path=filename)
@@ -99,7 +100,9 @@ def test_vcd_var_types_types():
             found_vars[var_name] = var
 
     # Test that we found the expected variables
-    assert len(found_vars) >= 10, f"Expected to find at least 10 test variables, found {len(found_vars)}"
+    assert (
+        len(found_vars) >= 10
+    ), f"Expected to find at least 10 test variables, found {len(found_vars)}"
 
     for var_name, var in found_vars.items():
         expected = var_tests[var_name]
@@ -110,15 +113,23 @@ def test_vcd_var_types_types():
 
         # Test var_type
         var_type = var.var_type()
-        assert var_type == expected["var_type"], f"Expected {expected['var_type']}, got {var_type} for {var_name}"
+        assert (
+            var_type == expected["var_type"]
+        ), f"Expected {expected['var_type']}, got {var_type} for {var_name}"
 
         # Test bitwidth/length
-        assert var.bitwidth() == expected["bitwidth"], f"Expected bitwidth {expected['bitwidth']}, got {var.bitwidth()} for {var_name}"
-        assert var.length() == expected["bitwidth"], f"Expected length {expected['bitwidth']}, got {var.length()} for {var_name}"
+        assert (
+            var.bitwidth() == expected["bitwidth"]
+        ), f"Expected bitwidth {expected['bitwidth']}, got {var.bitwidth()} for {var_name}"
+        assert (
+            var.length() == expected["bitwidth"]
+        ), f"Expected length {expected['bitwidth']}, got {var.length()} for {var_name}"
 
         # Test direction (should be Unknown for VCD)
         direction = var.direction()
-        assert direction == "Unknown", f"Expected direction Unknown, got {direction} for {var_name}"
+        assert (
+            direction == "Unknown"
+        ), f"Expected direction Unknown, got {direction} for {var_name}"
 
         # Test signal encoding properties
         if expected.get("is_string"):
@@ -143,6 +154,7 @@ def test_vcd_var_types_types():
             # Note: enum_type might be None if no enum definition is provided in VCD
             pass  # VCD format may not include enum definitions
 
+
 def test_hierarchy_metadata_swerv1():
     """Test reading metadata from hierarchy"""
     filename = _git_root_rel("wellen/inputs/verilator/swerv1.vcd")
@@ -154,7 +166,7 @@ def test_hierarchy_metadata_swerv1():
     assert timescale.factor == 1
     exponent = timescale.unit.to_exponent()
     assert exponent == -12
-    assert str(timescale.unit) == 'ps'
+    assert str(timescale.unit) == "ps"
 
 
 # Some FST tests ported from Rust (wellen/tests/fst.rs)
@@ -170,6 +182,7 @@ def load_verilator_many_sv_datatypes():
     bb = next(wrapper.scopes(h))
     assert bb.name(h) == "bb"
     return waves, bb
+
 
 def test_fst_enum_signals():
     """Test enum signals from Verilator FST file"""
@@ -196,6 +209,7 @@ def test_fst_enum_signals():
     enum_values_sorted = sorted(enum_values)
     expected = [("00", "A"), ("01", "B"), ("10", "C"), ("11", "D")]
     assert enum_values_sorted == expected
+
 
 def test_fst_var_directions():
     """Test variable directions from Verilator FST file"""
@@ -226,8 +240,12 @@ def test_fst_var_directions():
         direction = var.direction()
         var_type = var.var_type()
 
-        assert direction == expected["direction"], f"Expected direction {expected['direction']}, got {direction} for {var_name}"
-        assert var_type == expected["var_type"], f"Expected var_type {expected['var_type']}, got {var_type} for {var_name}"
+        assert (
+            direction == expected["direction"]
+        ), f"Expected direction {expected['direction']}, got {direction} for {var_name}"
+        assert (
+            var_type == expected["var_type"]
+        ), f"Expected var_type {expected['var_type']}, got {var_type} for {var_name}"
 
 
 def test_scope_types():
@@ -247,7 +265,7 @@ def test_scope_types():
     # Test various child scope types
     expected_scope_types = {
         "MODULE0": "module",
-        "TASK0": "task", 
+        "TASK0": "task",
         "FUNCTION0": "function",
         "BEGIN0": "begin",
         "FORK0": "fork",
@@ -279,16 +297,58 @@ def test_scope_types():
             found_scopes[scope_name] = scope
 
     # Test that we found the expected scopes
-    assert len(found_scopes) >= 15, f"Expected to find at least 15 test scopes, found {len(found_scopes)}"
+    assert (
+        len(found_scopes) >= 15
+    ), f"Expected to find at least 15 test scopes, found {len(found_scopes)}"
 
     # Test each scope type
     for scope_name, expected_type in expected_scope_types.items():
         if scope_name in found_scopes:
             scope = found_scopes[scope_name]
             actual_type = scope.scope_type()
-            assert actual_type == expected_type, f"Expected scope type '{expected_type}' for '{scope_name}', got '{actual_type}'"
+            assert (
+                actual_type == expected_type
+            ), f"Expected scope type '{expected_type}' for '{scope_name}', got '{actual_type}'"
 
             # Also test that full_name works correctly
             expected_full_name = f"main.{scope_name}"
             actual_full_name = scope.full_name(h)
-            assert actual_full_name == expected_full_name, f"Expected full name '{expected_full_name}', got '{actual_full_name}'"
+            assert (
+                actual_full_name == expected_full_name
+            ), f"Expected full name '{expected_full_name}', got '{actual_full_name}'"
+
+
+def test_slice():
+    filename = _git_root_rel("wellen/inputs/gameroy/trace_prefix.vcd")
+    waves = Waveform(path=filename)
+
+    h = waves.hierarchy
+
+    # the first signal change only happens at 4
+    assert waves.time_table[0] == 4
+
+    top = next(h.top_scopes())
+    assert top.name(h) == "gameroy"
+    cpu = next(top.scopes(h))
+
+    assert cpu.name(h) == "cpu"
+
+    pc = next(v for v in cpu.vars(h) if v.name(h) == "pc")
+    assert pc.full_name(h) == "gameroy.cpu.pc"
+    sp = next(v for v in cpu.vars(h) if v.name(h) == "sp")
+    assert sp.full_name(h) == "gameroy.cpu.sp"
+
+    ## querying a signal before it has a value should return none
+    pc_sig = waves.get_signal(pc)
+    sp_sig = waves.get_signal(sp)
+
+    ## pc is fine since it changes at 4 which is time_table idx 0
+    pc_signal = waves.get_signal(pc.signal_ref())
+    assert pc_sig.value_at_idx(0) is not None
+    sliced_signal = pc_sig.sliced(0, 4)
+
+    print(sp_sig.value_at_idx(1))
+    print(sliced_signal.value_at_idx(1))
+    ## sp only changes at 16 which is time table idx 1
+    assert sliced_signal.value_at_idx(1) is not None
+    assert sliced_signal.value_at_idx(0) is None

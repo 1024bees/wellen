@@ -1,7 +1,5 @@
 from typing import Optional, Tuple, Union, List, Literal
 
-
-
 class Hierarchy:
     def all_vars(self) -> VarIter: ...
     def top_scopes(self) -> ScopeIter: ...
@@ -13,12 +11,34 @@ class Hierarchy:
 class Scope:
     def name(self, hier: Hierarchy) -> str: ...
     def full_name(self, hier: Hierarchy) -> str: ...
-    def scope_type(self) -> Literal[
-        "module", "task", "function", "begin", "fork", "generate", "struct", "union", 
-        "class", "interface", "package", "program", "vhdl_architecture", "vhdl_procedure", 
-        "vhdl_function", "vhdl_record", "vhdl_process", "vhdl_block", "vhdl_for_generate", 
-        "vhdl_if_generate", "vhdl_generate", "vhdl_package", "ghw_generic", "vhdl_array", 
-        "unknown"
+    def scope_type(
+        self,
+    ) -> Literal[
+        "module",
+        "task",
+        "function",
+        "begin",
+        "fork",
+        "generate",
+        "struct",
+        "union",
+        "class",
+        "interface",
+        "package",
+        "program",
+        "vhdl_architecture",
+        "vhdl_procedure",
+        "vhdl_function",
+        "vhdl_record",
+        "vhdl_process",
+        "vhdl_block",
+        "vhdl_for_generate",
+        "vhdl_if_generate",
+        "vhdl_generate",
+        "vhdl_package",
+        "ghw_generic",
+        "vhdl_array",
+        "unknown",
     ]: ...
     def vars(self, hier: Hierarchy) -> VarIter: ...
     def scopes(self, hier: Hierarchy) -> ScopeIter: ...
@@ -31,16 +51,54 @@ class Var:
     def name(self, hier: Hierarchy) -> str: ...
     def full_name(self, hier: Hierarchy) -> str: ...
     def bitwidth(self) -> Optional[int]: ...
-    def var_type(self) -> Literal[
-        "Event", "Integer", "Parameter", "Real", "Reg", "Supply0", "Supply1", "Time", 
-        "Tri", "TriAnd", "TriOr", "TriReg", "Tri0", "Tri1", "WAnd", "Wire", "WOr", 
-        "String", "Port", "SparseArray", "RealTime", "Bit", "Logic", "Int", "ShortInt", 
-        "LongInt", "Byte", "Enum", "ShortReal", "Boolean", "BitVector", "StdLogic", 
-        "StdLogicVector", "StdULogic", "StdULogicVector"
+    def var_type(
+        self,
+    ) -> Literal[
+        "Event",
+        "Integer",
+        "Parameter",
+        "Real",
+        "Reg",
+        "Supply0",
+        "Supply1",
+        "Time",
+        "Tri",
+        "TriAnd",
+        "TriOr",
+        "TriReg",
+        "Tri0",
+        "Tri1",
+        "WAnd",
+        "Wire",
+        "WOr",
+        "String",
+        "Port",
+        "SparseArray",
+        "RealTime",
+        "Bit",
+        "Logic",
+        "Int",
+        "ShortInt",
+        "LongInt",
+        "Byte",
+        "Enum",
+        "ShortReal",
+        "Boolean",
+        "BitVector",
+        "StdLogic",
+        "StdLogicVector",
+        "StdULogic",
+        "StdULogicVector",
     ]: ...
-    def enum_type(self, hier: Hierarchy) -> Optional[Tuple[str, List[Tuple[str, str]]]]: ...
+    def enum_type(
+        self, hier: Hierarchy
+    ) -> Optional[Tuple[str, List[Tuple[str, str]]]]: ...
     def vhdl_type_name(self, hier: Hierarchy) -> Optional[str]: ...
-    def direction(self) -> Literal["Unknown", "Implicit", "Input", "Output", "InOut", "Buffer", "Linkage"]: ...
+    def direction(
+        self,
+    ) -> Literal[
+        "Unknown", "Implicit", "Input", "Output", "InOut", "Buffer", "Linkage"
+    ]: ...
     def length(self) -> Optional[int]: ...
     def is_real(self) -> bool: ...
     def is_string(self) -> bool: ...
@@ -71,14 +129,20 @@ class Signal:
     def value_at_time(self, time: int) -> Union[int, str]: ...
     def value_at_idx(self, idx: int) -> Union[int, str]: ...
     def all_changes(self) -> SignalChangeIter: ...
+    def sliced(self, start: int, end: int) -> Signal:
+        """
+        Creates a new signal from [end:start]
+        """
+        ...
 
 class SignalChangeIter:
     def __iter__(self) -> SignalChangeIter: ...
     def __next__(self) -> Tuple[int, str]: ...
 
-
 class TimescaleUnit:
-    def __str__(self) -> Literal["zs", "as", "fs", "ps", "ns", "us", "ms", "s", "unknown"]: ...
+    def __str__(
+        self,
+    ) -> Literal["zs", "as", "fs", "ps", "ns", "us", "ms", "s", "unknown"]: ...
     def __repr__(self) -> str: ...
     def to_exponent(self) -> Optional[int]: ...
 
