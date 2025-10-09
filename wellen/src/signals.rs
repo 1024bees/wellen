@@ -227,15 +227,11 @@ impl Eq for Signal {}
 impl Signal {
     fn max_states(&self) -> Option<States> {
         match self.data {
-            _ => None,
             SignalChangeData::FixedLength { encoding, .. } => match encoding {
-                FixedWidthEncoding::BitVector {
-                    max_states,
-                    bits,
-                    meta_byte,
-                } => Some(max_states),
+                FixedWidthEncoding::BitVector { max_states, .. } => Some(max_states),
                 _ => None,
             },
+            _ => None,
         }
     }
 

@@ -5,7 +5,6 @@ use std::sync::Arc;
 use crate::convert::Mappable;
 
 use super::Signal;
-use wellen;
 
 pub fn slice(canidate: &Signal, starting: u32, ending: u32) -> PyResult<Signal> {
     let width = 1 + ending.checked_sub(starting).ok_or(PyRuntimeError::new_err(
